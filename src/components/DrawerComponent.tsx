@@ -195,9 +195,18 @@ const DrawerComponent = () => {
       text: "Logout",
       icon: <HomeOutlinedIcon color={accent} />,
       func: () => {
-        logOut(() => dispatch(revokeAuthentication())).then(() =>
-          navigate("/")
-        );
+        logOut(() => dispatch(revokeAuthentication()))
+          .then(() =>
+            dispatch(
+              setUserPreference({
+                accent: "primary",
+                mode: true,
+                nickname: "newUser",
+                id: "LHeZBlyuKHt3W0znG2Lj",
+              })
+            )
+          )
+          .then(() => navigate("/"));
       },
     },
     {
