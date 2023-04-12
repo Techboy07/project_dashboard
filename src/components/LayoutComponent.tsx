@@ -5,7 +5,7 @@ import DrawerComponent from "./DrawerComponent";
 import { LayOutStyles } from "../styles";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxState } from "../redux";
-import { useNavigate } from "react-router-dom";
+
 import { firebase } from "../firebase/firebase.config";
 
 interface LayoutProptypes {
@@ -38,12 +38,14 @@ const LayoutComponent = ({ children }: LayoutProptypes) => {
         }}
       >
         <div>
-          <Toolbar
-            sx={{
-              paddingTop: "40px",
-              maxWidth: "100%",
-            }}
-          />
+          {authState && (
+            <Toolbar
+              sx={{
+                paddingTop: "40px",
+                maxWidth: "100%",
+              }}
+            />
+          )}
           {children}
         </div>
 

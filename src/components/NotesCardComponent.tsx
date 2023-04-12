@@ -86,13 +86,9 @@ const NotesCardComponent = ({
         subheader={date}
       />
       <CardContent>
-        <Typography
-          sx={{ overflowWrap: "break-word" }}
-          variant="body2"
-          color="textSecondary"
-        >
-          {Note.details}
-        </Typography>
+        {Note.details.split(/\n/).map((detail, index) => {
+          return <Typography key={index}>{detail}</Typography>;
+        })}
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
         <IconButton onClick={() => handleClickOpen()}>
