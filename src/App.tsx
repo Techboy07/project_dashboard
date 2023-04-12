@@ -1,15 +1,13 @@
 import "./App.css";
-import { FC } from "react";
+import { FC, useState, useEffect } from "react";
 import LayoutComponent from "./components/LayoutComponent";
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
 import NotesPage from "./pages/NotesPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "./redux";
-import { firebase } from "./firebase/firebase.config";
 
 const darkTheme = createTheme({
   typography: {
