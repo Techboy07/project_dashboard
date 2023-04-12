@@ -87,7 +87,11 @@ const NotesCardComponent = ({
       />
       <CardContent>
         {Note.details.split(/\n/).map((detail, index) => {
-          return <Typography key={index}>{detail}</Typography>;
+          return (
+            <Typography key={index} sx={{ wordWrap: "break-word" }}>
+              {detail}
+            </Typography>
+          );
         })}
       </CardContent>
       <CardActions sx={{ display: "flex", justifyContent: "space-between" }}>
