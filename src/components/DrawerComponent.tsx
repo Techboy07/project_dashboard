@@ -177,7 +177,7 @@ const DrawerComponent = () => {
       });
   };
 
-  // ***********************************************
+  // *************************************************************
 
   const menuItems = [
     {
@@ -196,6 +196,7 @@ const DrawerComponent = () => {
       icon: <HomeOutlinedIcon color={accent} />,
       func: () => {
         logOut(() => dispatch(revokeAuthentication()))
+          .then(() => localStorage.removeItem("notaculus"))
           .then(() =>
             dispatch(
               setUserPreference({

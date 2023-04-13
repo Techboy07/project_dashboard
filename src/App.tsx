@@ -8,6 +8,17 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "./redux";
+import { firebase } from "./firebase/firebase.config";
+import { logInUserAction } from "./redux";
+
+const { signIn } = firebase();
+
+const autoSignIn = (func: Function) => {
+  const userCred = JSON.parse(`${localStorage.getItem("notaculus")}`);
+  if (Boolean(userCred)) {
+    signIn(`${userCred.email}`, `${userCred.password}`).then(() => func());
+  }
+};
 
 const darkTheme = createTheme({
   typography: {
@@ -27,6 +38,7 @@ const App: FC = function () {
   const mode: boolean = useSelector((state: ReduxState) => {
     return state.userpreference.mode;
   });
+  const dispatch = useDispatch();
 
   const [Theme, setTheme] = useState(lightTheme);
 
@@ -37,6 +49,12 @@ const App: FC = function () {
       setTheme(darkTheme);
     }
   }, [mode]);
+
+  useEffect(() => {
+    autoSignIn(() => {
+      dispatch(logInUserAction());
+    });
+  });
 
   return (
     <>

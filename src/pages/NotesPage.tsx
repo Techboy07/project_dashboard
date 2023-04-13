@@ -55,12 +55,15 @@ const NotesPage = () => {
   const loading: boolean = useSelector(
     (state: ReduxState) => state.notes.loading
   );
+  const authState: boolean = useSelector((state: ReduxState) => {
+    return state.auth.isUserAuthenticated;
+  });
 
   useEffect(() => {
     updateNotes(userEmail, dispatch).then((res) =>
       dispatch(getNotesAction(res))
     );
-  }, [render]);
+  }, [render, authState]);
 
   const handleDelete = async (note: noteObject, func: Function) => {
     const docRef = doc(db, `users/${userEmail}/notes`, note.id);

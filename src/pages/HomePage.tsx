@@ -3,12 +3,18 @@ import { Paper, Container, Grid, Typography, Button } from "@mui/material";
 import ModalComponent from "../components/ModalComponent";
 import LoginAndSignUpComponent from "../components/LoginAndSignUpComponent";
 import { firebase } from "../firebase/firebase.config";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { revokeAuthentication } from "../redux/firebase/authentication/authActions";
-const accent = "primary";
+import { ReduxState } from "../redux";
+import { useNavigate } from "react-router-dom";
 
+const accent = "primary";
 const HomePage: FC = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const authState: boolean = useSelector((state: ReduxState) => {
+    return state.auth.isUserAuthenticated;
+  });
   const [mobile, setMobile] = useState({
     text: "center",
     flex: "center",
@@ -81,34 +87,49 @@ const HomePage: FC = () => {
               }}
             >
               <Grid item>
-                <Button
-                  variant="contained"
-                  sx={{
-                    width: "150px",
-                  }}
-                  color={accent}
-                  onClick={() => {
-                    setOpenModal(true);
-                    setLog("logIn");
-                  }}
-                >
-                  {/*!auth*/ true ? "Login" : "Logout"}
-                </Button>
+                {authState ? (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "150px",
+                    }}
+                    color={accent}
+                    onClick={() => navigate("/notes")}
+                  >
+                    My notes
+                  </Button>
+                ) : (
+                  <Button
+                    variant="contained"
+                    sx={{
+                      width: "150px",
+                    }}
+                    color={accent}
+                    onClick={() => {
+                      setOpenModal(true);
+                      setLog("logIn");
+                    }}
+                  >
+                    {/*!auth*/ true ? "Login" : "Logout"}
+                  </Button>
+                )}
               </Grid>
               <Grid item>
-                <Button
-                  variant="contained"
-                  color={accent}
-                  sx={{
-                    width: "150px",
-                  }}
-                  onClick={() => {
-                    setOpenModal(true);
-                    setLog("signUp");
-                  }}
-                >
-                  {"SignUp"}
-                </Button>
+                {!authState && (
+                  <Button
+                    variant="contained"
+                    color={accent}
+                    sx={{
+                      width: "150px",
+                    }}
+                    onClick={() => {
+                      setOpenModal(true);
+                      setLog("signUp");
+                    }}
+                  >
+                    {"SignUp"}
+                  </Button>
+                )}
               </Grid>
             </Grid>
           </Grid>

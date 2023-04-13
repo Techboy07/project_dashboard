@@ -44,6 +44,7 @@ export const authenthicateUser = (authType: string, email: string, password: str
             dispatch(requestAuthentication())
             createUser(email, password)
                 .then(() => dispatch(signUpUserAction()))
+                .then(() => localStorage.setItem('notaculus', JSON.stringify({ email: email, password: password })))
                 .then(() => func())
                 .catch((err) => dispatch(denyAuthentication()))
 
@@ -52,6 +53,7 @@ export const authenthicateUser = (authType: string, email: string, password: str
             dispatch(requestAuthentication())
             signIn(email, password).
                 then(() => dispatch(logInUserAction()))
+                .then(() => localStorage.setItem('notaculus', JSON.stringify({ email: email, password: password })))
                 .then(() => func())
                 .catch((err) => dispatch(denyAuthentication()))
         }
