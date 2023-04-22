@@ -10,6 +10,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "./redux";
 import { firebase } from "./firebase/firebase.config";
 import { logInUserAction } from "./redux";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 
 const { signIn } = firebase();
 
@@ -65,6 +66,7 @@ const App: FC = function () {
               <Route path="/" element={<HomePage />} />
               <Route path="/create" element={<CreatePage />} />
               <Route path="/notes" element={<NotesPage />} />
+              <Route path="/resetpassword" element={<ForgotPasswordPage />} />
             </Routes>
           </LayoutComponent>
         </BrowserRouter>

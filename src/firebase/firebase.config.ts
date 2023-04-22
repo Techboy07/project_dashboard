@@ -1,6 +1,6 @@
 import { Email } from "@mui/icons-material";
 import { initializeApp } from "firebase/app"
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "firebase/auth";
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { getFirestore, collection, addDoc } from "firebase/firestore";
 
 
@@ -51,6 +51,11 @@ export const firebase = () => {
         return user
     }
 
+    function resetPassword(eml: string) {
+        const sendMessage = sendPasswordResetEmail(auth, eml)
+        return sendMessage
+    }
+
     function performOnAuth(func1: Function, func2: Function) {
 
 
@@ -79,7 +84,8 @@ export const firebase = () => {
         createUser: createUser,
         performOnAuth: performOnAuth,
         logOut: logOut,
-        currentUser: auth.currentUser
+        currentUser: auth.currentUser,
+        passwordReset: resetPassword
 
     }
 

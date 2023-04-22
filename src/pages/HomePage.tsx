@@ -33,7 +33,7 @@ const HomePage: FC = () => {
   return (
     <>
       <ModalComponent opened={openModal} close={() => setOpenModal(false)}>
-        <LoginAndSignUpComponent log={log} />
+        <LoginAndSignUpComponent setLog={setLog} log={log} />
       </ModalComponent>
 
       <Paper elevation={0}>

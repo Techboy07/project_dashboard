@@ -1,5 +1,5 @@
 import { useState, ChangeEvent, FormEvent } from "react";
-import { Grid, TextField, Button } from "@mui/material";
+import { Grid, TextField, Button, Typography } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { ReduxState } from "../redux";
 import { firebase } from "../firebase/firebase.config";
@@ -12,11 +12,17 @@ import {
   getUserPreferenceAction,
 } from "../redux/firebase/userPreference/userPreferenceAction";
 
-const { performOnAuth, auth } = firebase();
+const { auth, passwordReset } = firebase();
 
 const accent = "primary";
 
-const LoginAndSignUpComponent = ({ log }: { log: string }) => {
+const LoginAndSignUpComponent = ({
+  log,
+  setLog,
+}: {
+  log: string;
+  setLog: Function;
+}) => {
   const navigate = useNavigate();
   const isLoading: boolean = useSelector((state: ReduxState) => {
     return state.auth.loading;
@@ -64,6 +70,13 @@ const LoginAndSignUpComponent = ({ log }: { log: string }) => {
     dispatch(authenthicateUser(log, email, password, getUserPreference));
   };
 
+  const resetPassword = () => {
+    if (log == "logIn") {
+      navigate("/resetpassword");
+    } else if (log == "signUp") {
+      setLog("logIn");
+    }
+  };
   return (
     <div>
       <form onSubmit={handleSubmit}>
@@ -99,6 +112,15 @@ const LoginAndSignUpComponent = ({ log }: { log: string }) => {
               type="submit"
             >
               {isLoading ? "loading..." : `${log}`}
+            </Button>
+            {/* forgot password */}
+
+            <Button
+              onClick={() => {
+                resetPassword();
+              }}
+            >
+              {log == "logIn" ? "Forgoten Password" : "Already have an account"}
             </Button>
             {/* insert login with google and facebook below*/}
 
