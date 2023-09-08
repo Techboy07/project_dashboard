@@ -18,7 +18,6 @@ import { TextField } from "@mui/material";
 import { TransitionProps } from "@mui/material/transitions";
 import { createFormStyles } from "../styles";
 import { handleEdit } from "../pages/CreatePage";
-import { firebase } from "../firebase/firebase.config";
 import { useSelector } from "react-redux";
 import { ReduxState } from "../redux";
 import { useNavigate } from "react-router-dom";
@@ -44,14 +43,11 @@ export default function ForgotPasswordPage({}: {}) {
   // *************************************************************
   const [email, setEmail] = useState("");
 
-  const accent: accentType = useSelector(
-    (state: ReduxState) => state.userpreference.accent
-  );
+  const accent = 'primary'
 
   const navigate = useNavigate();
   const realForm: LegacyRef<any> = useRef();
   const { field, form } = createFormStyles;
-  const { auth, passwordReset } = firebase();
   const [renderedText, setRenderedText] = useState(
     "A link will be sent to your email. Follow the link to reset your password!!!"
   );
@@ -59,19 +55,6 @@ export default function ForgotPasswordPage({}: {}) {
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
-    setIsLoading(true);
-    passwordReset(email)
-      .then(() =>
-        setRenderedText("The link has been sucessfully fowarded to your email")
-      )
-      .then(() => setIsLoading(false))
-      .then(() => realForm.current.reset())
-
-      .catch(() => {
-        setRenderedText("An error occured Try again!!!");
-        setIsLoading(false);
-        realForm.current.reset();
-      });
   };
 
   return (

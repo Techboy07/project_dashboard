@@ -1,42 +1,69 @@
 import { useState, FC, useEffect } from "react";
 import { Paper, Container, Grid, Typography, Button } from "@mui/material";
-import ModalComponent from "../components/ModalComponent";
-import LoginAndSignUpComponent from "../components/LoginAndSignUpComponent";
-import { firebase } from "../firebase/firebase.config";
-import { useDispatch, useSelector } from "react-redux";
-import { revokeAuthentication } from "../redux/firebase/authentication/authActions";
-import { ReduxState } from "../redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { ReduxState } from "../redux";
+import { useAuth0 } from "@auth0/auth0-react";
+import { logInUserAction } from "../redux/auth/authReducer";
+import { getProjectsAction } from "../redux/projects/projectReducer";
+import { getTechsAction } from "../redux/techs/techReducer";
+import { makeRequest } from "./CreatePage";
+import { techObject } from "./TechPage";
+
+
+
+
 
 const accent = "primary";
 const HomePage: FC = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const authState: boolean = useSelector((state: ReduxState) => {
-    return state.auth.isUserAuthenticated;
-  });
+  const {loginWithRedirect , isAuthenticated } = useAuth0()
+  const apiUrl = import.meta.env.VITE__API_URL
+  useEffect(()=>{
+if(isAuthenticated){
+dispatch(logInUserAction())
+makeRequest(`${apiUrl}/projects`,"get", null )
+.then(res => {
+  const projects = res.data.map( (project:any )=> { 
+    return {
+      projectName:project.projectName,
+      projectDescription: project.projectDescription,
+      projectImage:project.projectImage,
+      sourceCode:project.sourceCode,
+      projectId:project._id,
+      liveLink: project.live }
+  })
+dispatch(getProjectsAction(projects))})
+
+makeRequest(`${apiUrl}/techs`, "get", null)
+.then(res => {
+  const techs:techObject[] = res.data.map((tech:any) => {
+    const {_id,imageLink} = tech  
+    return {techId: _id, imageLink: imageLink}})
+    dispatch(getTechsAction(techs))
+}
+)
+
+}},[isAuthenticated])
+
+
+
+  const authState:boolean =  useSelector((state: ReduxState) => {
+    return state.auth.isUserAuthenthicated
+    });
   const [mobile, setMobile] = useState({
     text: "center",
     flex: "center",
   });
 
-  const { logOut } = firebase();
 
   const { text, flex } = mobile;
-  const [openModal, setOpenModal] = useState(false);
-  const [log, setLog] = useState("logIn");
 
-  useEffect(() => {
-    logOut(() => dispatch(revokeAuthentication()));
-  }, []);
 
   return (
     <>
-      <ModalComponent opened={openModal} close={() => setOpenModal(false)}>
-        <LoginAndSignUpComponent setLog={setLog} log={log} />
-      </ModalComponent>
-
-      <Paper elevation={0}>
+      <Paper>
         <Container
           maxWidth="lg"
           sx={{
@@ -67,8 +94,9 @@ const HomePage: FC = () => {
                   fontWeight: "700",
                   width: "100%",
                 }}
-              >
-                Write anything anywhere anytime
+            >
+
+                Welcome Lord Toluwalase 
               </Typography>
             </Grid>
 
@@ -94,7 +122,7 @@ const HomePage: FC = () => {
                       width: "150px",
                     }}
                     color={accent}
-                    onClick={() => navigate("/notes")}
+                    onClick={() => navigate("/projects")}
                   >
                     My notes
                   </Button>
@@ -105,33 +133,13 @@ const HomePage: FC = () => {
                       width: "150px",
                     }}
                     color={accent}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setLog("logIn");
-                    }}
+                    onClick={()=>loginWithRedirect()}
                   >
                     {/*!auth*/ true ? "Login" : "Logout"}
                   </Button>
                 )}
+                </Grid>
               </Grid>
-              <Grid item>
-                {!authState && (
-                  <Button
-                    variant="contained"
-                    color={accent}
-                    sx={{
-                      width: "150px",
-                    }}
-                    onClick={() => {
-                      setOpenModal(true);
-                      setLog("signUp");
-                    }}
-                  >
-                    {"SignUp"}
-                  </Button>
-                )}
-              </Grid>
-            </Grid>
           </Grid>
         </Container>
       </Paper>

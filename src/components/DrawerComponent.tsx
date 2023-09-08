@@ -11,7 +11,6 @@ import {
 import {
   AddCircleOutlineOutlined,
   SubjectOutlined,
-  SettingsOutlined,
 } from "@mui/icons-material";
 
 import { useDispatch, useSelector } from "react-redux";
@@ -28,28 +27,14 @@ import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import NightlightOutlinedIcon from "@mui/icons-material/NightlightOutlined";
 import { LayOutStyles } from "../styles";
 import { useNavigate } from "react-router-dom";
-import {
-  updateDoc,
-  doc,
-  getFirestore,
-  collection,
-  getDocs,
-} from "firebase/firestore";
-import { firebase } from "../firebase/firebase.config";
 import { useState, useEffect } from "react";
-import {
-  setUserPreference,
-  getUserPreferenceAction,
-} from "../redux/firebase/userPreference/userPreferenceAction";
-import { revokeAuthentication } from "../redux/firebase/authentication/authActions";
-import SettingsMenuComponent from "./SettingsMenuComponents";
-import { userPreferenceStateObject } from "../redux/firebase/userPreference/userPreferenceAction";
-import { lightBlue } from "@mui/material/colors";
-
+import { useAuth0 } from "@auth0/auth0-react";
 const DrawerComponent = () => {
-  const userPreference = useSelector((state: ReduxState) => {
-    return state.userpreference;
-  });
+  //const userPreference = useSelector((state: ReduxState) => {
+  //return state.userpreference;
+ // });
+  //
+  const {logout} = useAuth0()
   const [light, setLight] = useState(true);
 
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -72,48 +57,15 @@ const DrawerComponent = () => {
   }, []);
   // ************************
   // ************ when light state changes***************************
+  //
   useEffect(() => {
-    if (authState) {
-      const userEmail = auth.currentUser?.email;
-      const db = getFirestore();
-      const colRef = collection(db, `users/${userEmail}/userPreference`);
-      getDocs(colRef)
-        .then((snapshot) => {
-          const user: userPreferenceStateObject = {
-            id: snapshot.docs[0].id,
-            accent: snapshot.docs[0].data().accent,
-            mode: snapshot.docs[0].data().mode,
-            nickname: snapshot.docs[0].data().nickname,
-          };
-          return user;
-        })
-        .then(({ id, accent, nickname, mode }) => {
-          const docRef = doc(db, `users/${userEmail}/userPreference`, id);
-          updateDoc(docRef, {
-            mode: light,
-          })
-            .then(() =>
-              dispatch(
-                setUserPreference({
-                  mode: light,
-                  accent: accent,
-                  nickname: nickname,
-                  id,
-                })
-              )
-            )
+    if (authState){
+      console.log({authenticated: true});
 
-            .catch((err) => {
-              alert("there was setting user preferences");
-              throw Error(err);
-            });
-        })
-        .catch((err) => {
-          alert("there was an getting user preferences");
-          throw Error(err);
-        });
     }
-  }, [light]);
+      },[])
+  //
+  //
   // ********************************
   // ******************* redux ***************************
 
@@ -121,15 +73,15 @@ const DrawerComponent = () => {
     return state.drawer.isOpen;
   });
 
-  const authState = useSelector((state: ReduxState) => {
-    return state.auth.isUserAuthenticated;
+  const authState:boolean = useSelector((state: ReduxState) => {
+    return state.auth.isUserAuthenthicated
   });
 
-  const nickname = userPreference.nickname;
+  const nickname =  'New user'//userPreference.nickname;
 
-  const { accent } = userPreference;
-  const { auth, logOut } = firebase();
+  //const { accent } = userPreference;
 
+  const accent = 'primary'
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -142,7 +94,7 @@ const DrawerComponent = () => {
   }
 
   const switchLight = () => {
-    const userEmail = auth.currentUser?.email;
+  /*  const userEmail = auth.currentUser?.email;
     const db = getFirestore();
     const colRef = collection(db, `users/${userEmail}/userPreference`);
     //  get data from firebase
@@ -174,53 +126,36 @@ const DrawerComponent = () => {
       .catch((err) => {
         alert("there was an getting user preferences");
         throw Error(err);
-      });
+        });*/
   };
 
   // *************************************************************
 
-  const menuItems = [
-    {
-      text: "My notes",
+  const menuItems =[
+ {
+      text: "My Tech Stack",
 
       icon: <SubjectOutlined color={accent} />,
-      path: "/Notes",
+      path: "/techs",
+    },
+    
+    {
+      text: "My Projects",
+
+      icon: <SubjectOutlined color={accent} />,
+      path: "/Projects",
     },
     {
-      text: "Create Notes",
+      text: "Add Project",
       icon: <AddCircleOutlineOutlined color={accent} />,
       path: "/Create",
     },
     {
       text: "Logout",
       icon: <HomeOutlinedIcon color={accent} />,
-      func: () => {
-        logOut(() => dispatch(revokeAuthentication()))
-          .then(() => localStorage.removeItem("notaculus"))
-          .then(() =>
-            dispatch(
-              setUserPreference({
-                accent: "primary",
-                mode: true,
-                nickname: "newUser",
-                id: "LHeZBlyuKHt3W0znG2Lj",
-              })
-            )
-          )
-          .then(() => navigate("/"));
-      },
-    },
-    {
-      text: "Settings",
-      icon: <SettingsOutlined color={accent} />,
-      func: handleClick,
-      child: (
-        <SettingsMenuComponent
-          open={open}
-          setOpen={handleClose}
-          anchor={anchorEl}
-        />
-      ),
+      func: () =>  {
+
+ logout({ logoutParams: { returnTo: window.location.origin } }) },
     },
   ];
 
@@ -246,17 +181,17 @@ const DrawerComponent = () => {
               <ListItem
                 button
                 onClick={(e?) => {
+                  e.preventDefault()
                   if (item.path) {
                     navigate(item.path);
                   } else if (item.func) {
-                    item.func(e);
+                    item.func();
                   }
                 }}
               >
                 <ListItemIcon>{item.icon}</ListItemIcon>
                 <ListItemText primary={item.text} />
               </ListItem>
-              {item.child ? item.child : null}
             </div>
           ))}
 

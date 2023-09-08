@@ -1,27 +1,19 @@
-import { ReactNode, useState, useEffect } from "react";
-import { Toolbar, Paper, AppBar } from "@mui/material";
+import { ReactNode } from "react";
+import { Toolbar, AppBar } from "@mui/material";
 import MyAppBar from "./AppBar";
 import DrawerComponent from "./DrawerComponent";
 import { LayOutStyles } from "../styles";
-import { useDispatch, useSelector } from "react-redux";
-import { ReduxState } from "../redux";
 
-import { firebase } from "../firebase/firebase.config";
+import { useSelector } from "react-redux";
+import { ReduxState} from "../redux"
 
 interface LayoutProptypes {
   children: ReactNode;
 }
 
 const LayoutComponent = ({ children }: LayoutProptypes) => {
-  const { performOnAuth } = firebase();
 
-  const dispatch = useDispatch();
-  const authState = useSelector((state: ReduxState) => {
-    return state.auth.isUserAuthenticated;
-  });
-  const userPreference = useSelector((state: ReduxState) => {
-    return state.userpreference;
-  });
+  const authState: boolean = useSelector((state: ReduxState) => state.auth.isUserAuthenthicated  )
 
   const { root, page } = LayOutStyles();
   return (

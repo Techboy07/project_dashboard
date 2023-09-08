@@ -1,10 +1,6 @@
 import { CSSProperties } from 'react'
-import { noteObject } from './pages/NotesPage';
-import { yellow, green, pink, blue } from "@mui/material/colors";
 import { Theme, useTheme } from '@mui/material';
-import { store } from './redux';
 
-const mode = store.getState().userpreference.mode
 
 export const modalStyles: object = {
   position: "absolute",
@@ -30,35 +26,7 @@ export const createFormStyles: { field: CSSProperties; form: Object } = {
     padding: 20,
   },
 };
-
-export const NoteStyles = (note: noteObject) => {
-  return {
-    card: {
-      // border: () => {
-      //   if (note.category == 'work') {
-      //     return '1px solid red'
-      //   }
-      // }
-    },
-    avatar: {
-      backgroundColor: () => {
-        if (note.category == 'work') {
-          return yellow[700]
-        } if (note.category == 'todos') {
-          return pink[500]
-        } if (note.category == 'money') {
-          return green[500]
-        }
-        return blue[500]
-      }
-    }
-  }
-}
-
-
-const drawerWidth = 240;
-
-
+const drawerWidth = 24
 export const LayOutStyles = () => {
 
   const theme: Theme = useTheme();

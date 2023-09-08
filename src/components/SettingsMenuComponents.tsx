@@ -12,9 +12,6 @@ import CancelIcon from "@mui/icons-material/Cancel";
 import NickNameComponent from "./NicknameComponent";
 import { useSelector, useDispatch } from "react-redux";
 import { ReduxState } from "../redux";
-import { updateDoc, doc, getFirestore } from "firebase/firestore";
-import { firebase } from "../firebase/firebase.config";
-import { setUserPreference } from "../redux/firebase/userPreference/userPreferenceAction";
 interface setting {
   type: string;
   child?: JSX.Element;
@@ -34,32 +31,10 @@ const themeColors: color[] = [
 ];
 
 const ColorComponents = () => {
-  const dispatch = useDispatch();
-  const userPreference = useSelector(
-    (state: ReduxState) => state.userpreference
-  );
 
-  const { auth } = firebase();
 
-  const switchTheme = (color: color) => {
-    const userEmail = auth.currentUser?.email;
-    const db = getFirestore();
-    const docRef = doc(
-      db,
-      `users/${userEmail}/userPreference`,
-      userPreference.id
-    );
-    updateDoc(docRef, {
-      accent: color,
-    })
-      .then(() => {
-        dispatch(setUserPreference({ ...userPreference, accent: color }));
-      })
-      .catch((err) => {
-        alert("there was an error changing the theme color!!!");
-        throw Error(err);
-      });
-  };
+
+
 
   return (
     <Paper

@@ -4,86 +4,118 @@ import {
   Typography,
   Button,
   TextField,
-  RadioGroup,
-  Radio,
-  FormControlLabel,
-  FormControl,
-  FormLabel,
-  FormHelperText,
   Paper,
 } from "@mui/material";
 import KeyboardArrowRightIcon from "@mui/icons-material/KeyboardArrowRight";
 import { createFormStyles } from "../styles";
+import { techObject } from "./TechPage";
+import { projectObject } from "./ProjectPage";
 
+import { getProjectsAction } from "../redux/projects/projectReducer";
+import { getTechsAction } from "../redux/techs/techReducer";
+import { useDispatch } from "react-redux";
 // ********************************************************************************************************
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp,
-  doc,
-  updateDoc,
-  orderBy,
-  query,
-  where,
-} from "firebase/firestore";
-// ************************************************************************************************
 
-import { firebase } from "../firebase/firebase.config";
+import axios from "axios";
 
-import { useDispatch, useSelector } from "react-redux";
-import { ReduxState } from "../redux";
+export function makeRequest<T>(link:string,method:string,body: T){
+  return axios({
+    method: method,
+    url: link,
+    data: body?body:null,
+    headers :{
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET,PUT,POST,DELETE,PATCH,OPTIONS" }
+  })
+}
+
+
+
 
 const CreatePage: FC = () => {
-  const userPreference = useSelector((state: ReduxState) => {
-    return state.userpreference;
-  });
+  const accent = 'primary'
 
-  const { accent } = userPreference;
 
-  const dispatch = useDispatch();
-
-  const { auth, performOnAuth } = firebase();
-  const db = getFirestore();
   // *************************************************************
   const [title, setTitle] = useState("");
   const [details, setDetails] = useState("");
-  const [category, setCategory] = useState("todos");
+  const [image, setImage] = useState("");
+  const[live, setLive] = useState("")
+  const[source, setSource] = useState("")
+
+  const [tech, setTech] = useState("")
+
   const [detailsError, setDetailsError] = useState(false);
   const [titleError, setTitleError] = useState(false);
+  const [imageError, setImageError] = useState(false)
+  const [techError,setTechError]= useState(false)
 
+const dispatch = useDispatch()
+  const techForm: LegacyRef<any> = useRef()
   const realForm: LegacyRef<any> = useRef();
+  const apiUrl = import.meta.env.VITE__API_URL
 
-  let userEmail: string | null | undefined;
-  performOnAuth(
-    () => {
-      userEmail = auth.currentUser?.email;
-    },
-    () => {
-      userEmail = "";
-    }
-  );
-
-  const handleSubmit = (e: FormEvent) => {
-    const colRef = collection(db, `users/${userEmail}/notes`);
-
+  const handleSubmit = (e:FormEvent)=>{
     e.preventDefault();
     title == "" ? setTitleError(true) : setTitleError(false);
     details == "" ? setDetailsError(true) : setDetailsError(false);
-    if (title && details) {
-      addDoc(colRef, {
-        title: title,
-        details: details,
-        category: category,
-        createdAt: serverTimestamp(),
-      }).then(() => {
-        alert("done");
-        realForm.current.reset();
-      });
-    }
-  };
+    image == "" ? setImageError(true) : setDetailsError(false);
 
-  const categories: string[] = ["Money", "Work", "Todos", "Reminder"];
+    if (title && details && image) {
+      makeRequest(`${apiUrl}/projects`,"post",{
+        projName: title,
+        projDescription: details,
+        image: image,
+        livePage:live,
+        source: source
+
+      }).then(()=>{
+
+
+
+        makeRequest(`${apiUrl}/projects`, "get", null )
+        .then(res => {
+          const techees:projectObject[] = res.data.map((t:any)=> {
+            const {_id ,projectName,projectDescription,
+            projectImage,sourceCode,live} = t
+            return {projectId: _id,projectImage,projectName,projectDescription,sourceCode,liveLink: live}
+          })
+          dispatch( getProjectsAction(techees))
+          alert("successfuly created")
+        })
+
+
+
+
+      }).then((res)=> {
+        realForm.current.reset()
+        console.log(res); })
+        .catch(err => console.log(err))
+    }
+  }
+  const handleTechSubmit = (e:FormEvent) => {
+    e.preventDefault()
+    if(tech !== ""){
+      makeRequest(`${apiUrl}/techs`,"post",{image: tech})
+      .then(()=>{
+makeRequest(`${apiUrl}/techs`, "get", null )
+        .then(res => {
+          const techees:techObject[] = res.data.map((t:any)=> {
+            const {_id ,imageLink} = t
+            return {techId: _id, imageLink}
+          })
+          dispatch( getTechsAction(techees))
+          alert("tech successfuly created")
+        }) })
+    .then((res)=>{
+      console.log(res)
+      techForm.current.reset()
+    })
+    .catch(err => {console.log(err)})}
+    else{
+setTechError(true)
+    }
+  }
   const { field, form } = createFormStyles;
 
   return (
@@ -102,12 +134,13 @@ const CreatePage: FC = () => {
             color="textSecondary"
             gutterBottom
           >
-            Create a New Note
+            Add a New Project
           </Typography>
+
           <TextField
             onChange={(e) => setTitle(e.target.value)}
             variant="outlined"
-            label="Note Title"
+            label="Title"
             color={accent}
             fullWidth
             required
@@ -128,27 +161,43 @@ const CreatePage: FC = () => {
             error={detailsError}
           />
 
-          <FormControl sx={field}>
-            <FormLabel color={accent}>Note category</FormLabel>
 
-            <RadioGroup
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-            >
-              {categories.map((category, index) => {
-                return (
-                  <FormControlLabel
-                    key={index}
-                    value={category.toLowerCase()}
-                    control={<Radio color={accent} />}
-                    label={category}
-                  />
-                );
-              })}
-            </RadioGroup>
+          <TextField
+            onChange={(e) => setImage(e.target.value)}
+            variant="outlined"
+            label="Image Url"
+            color={accent}
+            fullWidth
+            required
+            // sx={field}
+            error={imageError} 
+          />
 
-            <FormHelperText></FormHelperText>
-          </FormControl>
+
+          <TextField
+            onChange={(e) => setLive(e.target.value)}
+            variant="outlined"
+            label="Live Url"
+            color={accent}
+            fullWidth
+            required
+            // sx={field}
+          />
+
+
+
+
+          <TextField
+            onChange={(e) => setSource(e.target.value)}
+            variant="outlined"
+            label="Source Code"
+            color={accent}
+            fullWidth
+            required
+            // sx={field}
+          />
+
+
           <br />
           <Button
             variant="contained"
@@ -160,6 +209,52 @@ const CreatePage: FC = () => {
           </Button>
         </form>
       </Paper>
+
+
+
+      <Paper>
+        <form onSubmit={handleTechSubmit}
+          style={form} 
+          noValidate
+          autoComplete="off"
+          ref={techForm}
+        >
+
+
+          <Typography
+            variant="h6"
+            component={"h2"}
+            color="textSecondary"
+            gutterBottom
+          >
+            Add a New Technology
+          </Typography>
+
+
+          <TextField
+            onChange={(e) => setTech(e.target.value)}
+            variant="outlined"
+            label="Tech Image Url"
+            color={accent}
+            fullWidth
+            required
+            // sx={field}
+            error={techError}
+          />
+
+
+          <Button
+            variant="contained"
+            type="submit"
+            color={accent}
+            endIcon={<KeyboardArrowRightIcon fontSize="small" />}
+          >
+            Submit
+          </Button>
+        </form>
+
+      </Paper>
+
     </>
   );
 };
@@ -174,23 +269,8 @@ interface updateForm {
 
 // *********************  EDIT FUNCTION **************************************
 
-export const handleEdit: any = (
-  e: FormEvent,
-  { email, title, details, id, func }: updateForm
-) => {
-  const db = getFirestore();
-  const docRef = doc(db, `users/${email}/notes`, id);
+export const handleEdit  = () => {
 
-  e.preventDefault();
-
-  if (title && details) {
-    updateDoc(docRef, {
-      title: title,
-      details: details,
-    }).then(() => {
-      func();
-    });
-  }
 };
 
 export default CreatePage;

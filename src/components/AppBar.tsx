@@ -1,10 +1,8 @@
-import React from "react";
 import { AppBar, Toolbar, Typography, Avatar } from "@mui/material";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import {
   openDrawerAction,
-  closeDrawerAction,
 } from "../redux/ui/drawer/drawerAction";
 import { ReduxState } from "../redux";
 
@@ -12,7 +10,7 @@ const [, mm, dd, yy] = Date().split(" ");
 
 const MyAppBar = () => {
   const dispatch = useDispatch();
-
+/*
   const authState = useSelector((state: ReduxState) => {
     return state.auth.isUserAuthenticated;
   });
@@ -20,7 +18,11 @@ const MyAppBar = () => {
     return state.userpreference;
   });
 
-  const { accent } = userPreference;
+
+
+  const { accent } = userPreference;*/
+const accent = 'primary'
+
   const appbar = {
     width: "100%",
     "&.MuiAppBar-root": {

@@ -4,15 +4,16 @@ import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogContentText from "@mui/material/DialogContentText";
 import DialogTitle from "@mui/material/DialogTitle";
-import { noteObject } from "../pages/NotesPage";
+
+import {projectObject} from "../pages/ProjectPage"
 
 export default function AlertDialog({
-  note,
+  project,
   open,
   handleClose,
   handleDelete,
 }: {
-  note: noteObject;
+  project: projectObject;
   open: boolean;
   handleClose: any;
   handleDelete: any;
@@ -23,21 +24,19 @@ export default function AlertDialog({
         open={open}
         onClose={handleClose}
         aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">{note.title}</DialogTitle>
+        aria-describedby="alert-dialog-description">
+
+        <DialogTitle id="alert-dialog-title">{project.projectName}</DialogTitle>
         <DialogContent>
           <DialogContentText id="alert-dialog-description">
-            Are you sure you want to delete <strong>{note.title}</strong>
+            Are you sure you want to delete <strong>{project.projectName}</strong>
           </DialogContentText>
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>No</Button>
           <Button
             autoFocus
-            onClick={() => {
-              handleDelete(note, handleClose);
-            }}
+            onClick={handleDelete}
           >
             Sure
           </Button>

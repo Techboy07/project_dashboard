@@ -3,23 +3,12 @@ import { FC, useState, useEffect } from "react";
 import LayoutComponent from "./components/LayoutComponent";
 import HomePage from "./pages/HomePage";
 import CreatePage from "./pages/CreatePage";
-import NotesPage from "./pages/NotesPage";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
-import { useSelector, useDispatch } from "react-redux";
-import { ReduxState } from "./redux";
-import { firebase } from "./firebase/firebase.config";
-import { logInUserAction } from "./redux";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
-
-const { signIn } = firebase();
-
-const autoSignIn = (func: Function) => {
-  const userCred = JSON.parse(`${localStorage.getItem("notaculus")}`);
-  if (Boolean(userCred)) {
-    signIn(`${userCred.email}`, `${userCred.password}`).then(() => func());
-  }
-};
+import ProjectPage from "./pages/ProjectPage";
+import { Auth0Provider } from "@auth0/auth0-react";
+import TechPage from "./pages/TechPage";
 
 const darkTheme = createTheme({
   typography: {
@@ -36,41 +25,32 @@ const lightTheme = createTheme({
 });
 
 const App: FC = function () {
-  const mode: boolean = useSelector((state: ReduxState) => {
-    return state.userpreference.mode;
-  });
-  const dispatch = useDispatch();
-
   const [Theme, setTheme] = useState(lightTheme);
 
-  useEffect(() => {
-    if (mode) {
-      setTheme(lightTheme);
-    } else {
-      setTheme(darkTheme);
-    }
-  }, [mode]);
 
-  useEffect(() => {
-    autoSignIn(() => {
-      dispatch(logInUserAction());
-    });
-  });
 
   return (
     <>
-      <ThemeProvider theme={Theme}>
-        <BrowserRouter>
-          <LayoutComponent>
-            <Routes>
-              <Route path="/" element={<HomePage />} />
-              <Route path="/create" element={<CreatePage />} />
-              <Route path="/notes" element={<NotesPage />} />
-              <Route path="/resetpassword" element={<ForgotPasswordPage />} />
-            </Routes>
-          </LayoutComponent>
-        </BrowserRouter>
-      </ThemeProvider>
+      <Auth0Provider domain={import.meta.env.VITE__DOMAIN} clientId={import.meta.env.VITE__CLIENT_ID}
+         authorizationParams={{
+      redirect_uri: window.location.origin
+    }}
+      >
+        <ThemeProvider theme={Theme}>
+          <BrowserRouter>
+            <LayoutComponent>
+              <Routes>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/create" element={<CreatePage />} />
+                <Route path="/resetpassword" element={<ForgotPasswordPage />} />
+                <Route path="/projects" element={<ProjectPage/>}/>
+                <Route path="/techs" element={<TechPage/>}/>
+              </Routes>
+            </LayoutComponent>
+          </BrowserRouter>
+        </ThemeProvider>
+
+      </Auth0Provider>
     </>
   );
 };

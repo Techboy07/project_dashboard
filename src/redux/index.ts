@@ -4,7 +4,6 @@ import { Action } from "redux";
 
 export {store }from "./store";
 
-export {logInUserAction, signUpUserAction} from './firebase/authentication/authActions'
 
 
 export type ReduxState = ReturnType<typeof store.getState>

@@ -1,6 +1,0 @@
-export const GET_NOTES = 'GET_NOTES'
-export const GET_NOTES_REQUEST = 'GET_NOTES_REQUEST'
-export const GET_NOTES_FAILED = 'GET_NOTES_FAILED'
-export const EDIT_NOTES = 'EDIT_NOTES'
-export const DELETE_NOTES = 'DELETE_NOTES'
-export const CREATE_NOTES = 'CREATE_NOTES'
