@@ -1,6 +1,6 @@
 
 import authReducer from "./auth/authReducer"
-import { applyMiddleware } from "@reduxjs/toolkit"
+//import { applyMiddleware } from "@reduxjs/toolkit"
 import thunk from "redux-thunk"
 import { createStore, combineReducers } from "redux"
 import { drawerReducer } from "./ui/drawer/drawerAction"
@@ -16,7 +16,5 @@ const rootReducer = combineReducers({
 })
 
 
-export const store = createStore(rootReducer, composeWithDevTools(
-    applyMiddleware(thunk)
-    // other store enhancers if any
-))
+export const store = createStore(rootReducer)
+    // other store enhancers if))

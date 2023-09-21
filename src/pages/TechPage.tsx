@@ -16,7 +16,7 @@ export interface techObject{
 const TechPage = ()=>{
   const projs = useSelector((state:ReduxState)=> state.techs.techs)
   const dispatch = useDispatch()
-  const [projects, setProjects]=useState<techObject[]>([])
+  const [projects, setProjects]=useState<techObject[]>(projs)
   const [project,setProject]= useState(projects[0])
   const [openAlert,setOpenAlert] = useState(false)
 
@@ -63,9 +63,8 @@ const TechPage = ()=>{
       <Grid container spacing={4} sx={{paddingInline: "auto"}}>
         {
           projects.map((tech, idx)=>
-            <Grid item xs={12} sm={4} md={3}>
+            <Grid key={idx} item xs={12} sm={4} md={3}>
               <TechCardComponent 
-                key={idx}
                 techImageLink={tech.imageLink}
                 techId={tech.techId}
                 deleteFn={()=>{

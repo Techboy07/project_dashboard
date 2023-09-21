@@ -25,3 +25,6 @@ dist-ssr
 
 # React Component Preview
 previewConfig.json
+
+# Local Netlify folder
+.netlify

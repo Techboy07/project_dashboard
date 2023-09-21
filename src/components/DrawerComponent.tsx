@@ -58,13 +58,6 @@ const DrawerComponent = () => {
   // ************************
   // ************ when light state changes***************************
   //
-  useEffect(() => {
-    if (authState){
-      console.log({authenticated: true});
-
-    }
-      },[])
-  //
   //
   // ********************************
   // ******************* redux ***************************

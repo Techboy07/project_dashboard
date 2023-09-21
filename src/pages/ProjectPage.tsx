@@ -24,7 +24,7 @@ const ProjectPage = ()=>{
   const projs = useSelector((state:ReduxState)=> state.projects.projects)
 const dispatch = useDispatch()
   const apiUrl = import.meta.env.VITE__API_URL
-  const [projects, setProjects]=useState<projectObject[]>([])
+  const [projects, setProjects]=useState<projectObject[]>(projs)
   const [project, setProject] = useState<projectObject>(projects[0])
   const [openDialog, setOpenDialog] = useState(false)
 
@@ -76,9 +76,9 @@ const dispatch = useDispatch()
         {
           
           projects.map((project, idx)=>
-            <Grid item xs ={12} sm={4} md={4}>
+            <Grid key={idx} item xs={12} sm={4} md={4}>
             <ProjectCardComponent 
-            key={idx} 
+            
             projectName={project.projectName} 
             projectDescription={project.projectDescription}
             projectImage={project.projectImage}
